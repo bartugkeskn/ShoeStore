@@ -11,4 +11,5 @@ namespace ShoeStore.Application.Products;
 public interface IProductQueryService
 {
     Task<PagedResult<ProductListItemDto>> GetListAsync(ProductListQuery query, CancellationToken ct = default);
+    Task<ProductDetailDto?> GetBySlugAsync(string slug, CancellationToken ct = default);
 }

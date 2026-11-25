@@ -86,4 +86,43 @@ public class ProductQueryService : IProductQueryService
 
         return new PagedResult<ProductListItemDto>(items, page, pageSize, totalCount);
     }
+
+    public async Task<ProductDetailDto?> GetBySlugAsync(string slug, CancellationToken ct = default)
+    {
+        var p = await _db.Products.AsNoTracking()
+            .Where(x => x.IsActive && x.Slug == slug)
+            .Select(x => new
+            {
+                x.Id,
+                x.Name,
+                x.Slug,
+                x.Description,
+                x.BrandId,
+                BrandName = x.Brand.Name,
+                x.CategoryId,
+                CategoryName = x.Category.Name,
+                x.Gender,
+                x.BasePrice,
+                Images = x.Images.OrderBy(i => i.SortOrder)
+                    .Select(i => new ProductImageDto(i.Url, i.Color, i.SortOrder)).ToList(),
+                Variants = x.Variants
+                    .Select(v => new { v.Id, v.Color, v.Size, v.Sku, v.Price, v.StockQuantity }).ToList()
+            })
+            .FirstOrDefaultAsync(ct);
+
+        if (p is null) return null;
+
+        // Varyantın kendi fiyatı yoksa ürünün temel fiyatı geçerli; bedenleri sayısal sıraya diz
+        var variants = p.Variants
+            .OrderBy(v => v.Color)
+            .ThenBy(v => v.Size.Length)
+            .ThenBy(v => v.Size)
+            .Select(v => new ProductVariantDto(v.Id, v.Color, v.Size, v.Sku, v.Price ?? p.BasePrice, v.StockQuantity))
+            .ToList();
+
+        return new ProductDetailDto(
+            p.Id, p.Name, p.Slug, p.Description,
+            p.BrandId, p.BrandName, p.CategoryId, p.CategoryName,
+            p.Gender.ToString(), p.BasePrice, p.Images, variants);
+    }
 }

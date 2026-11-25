@@ -16,5 +16,11 @@ public static class ProductEndpoints
             var result = await service.GetListAsync(query, ct);
             return Results.Ok(result);
         });
+
+        group.MapGet("/{slug}", async (string slug, IProductQueryService service, CancellationToken ct) =>
+        {
+            var product = await service.GetBySlugAsync(slug, ct);
+            return product is null ? Results.NotFound() : Results.Ok(product);
+        });
     }
 }
