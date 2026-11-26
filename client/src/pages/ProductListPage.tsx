@@ -4,6 +4,7 @@ import { getFilterOptions, getProducts } from '../api/products';
 import FilterPanel from '../components/FilterPanel';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { emptyFilters, type ProductFilters } from '../types';
+import { Link } from 'react-router-dom';
 
 const formatPrice = (value: number) =>
   new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(value);
@@ -73,7 +74,7 @@ export default function ProductListPage() {
             <>
               <div className="grid" style={{ opacity: isFetching ? 0.6 : 1 }}>
                 {data.items.map((p) => (
-                  <div className="card" key={p.id}>
+                  <Link className="card" key={p.id} to={`/products/${p.slug}`}>
                     {p.imageUrl && <img src={p.imageUrl} alt={p.name} />}
                     <div className="card-body">
                       <div className="brand">{p.brandName}</div>
@@ -81,7 +82,7 @@ export default function ProductListPage() {
                       <div className="price">{formatPrice(p.price)}</div>
                       {!p.inStock && <div className="out">Tükendi</div>}
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
 

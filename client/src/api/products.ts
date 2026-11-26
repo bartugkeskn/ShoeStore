@@ -1,4 +1,4 @@
-import type { FilterOptions, PagedResult, ProductFilters, ProductListItem } from '../types';
+import type { FilterOptions, PagedResult, ProductDetail, ProductFilters, ProductListItem } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'https://localhost:7001';
 
@@ -24,5 +24,12 @@ export async function getProducts(
 export async function getFilterOptions(): Promise<FilterOptions> {
   const res = await fetch(`${API_URL}/api/products/filters`);
   if (!res.ok) throw new Error('Filtreler yüklenemedi');
+  return res.json();
+}
+
+export async function getProductBySlug(slug: string): Promise<ProductDetail | null> {
+  const res = await fetch(`${API_URL}/api/products/${encodeURIComponent(slug)}`);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error('Ürün yüklenemedi');
   return res.json();
 }
