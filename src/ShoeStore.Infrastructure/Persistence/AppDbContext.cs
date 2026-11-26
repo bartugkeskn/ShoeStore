@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ShoeStore.Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using ShoeStore.Infrastructure.Identity;
 
 namespace ShoeStore.Infrastructure.Persistence;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -20,7 +22,7 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configurations klasöründeki tüm ayar sınıflarını otomatik uygular
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        base.OnModelCreating(modelBuilder); // Identity'nin kendi tablo ayarlarını kurar, ilk satır olmalı
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly); // Configurations klasöründeki tüm ayar sınıflarını otomatik uygular
     }
 }
