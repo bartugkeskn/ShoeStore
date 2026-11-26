@@ -17,3 +17,48 @@ export interface PagedResult<T> {
   totalCount: number;
   totalPages: number;
 }
+
+export interface Lookup {
+  id: number;
+  name: string;
+}
+
+export interface CategoryLookup {
+  id: number;
+  name: string;
+  parentId: number | null;
+}
+
+export interface FilterOptions {
+  brands: Lookup[];
+  categories: CategoryLookup[];
+  colors: string[];
+  sizes: string[];
+}
+
+// Form alanlarıyla kolay bağlansın diye hepsi string; boş string = "filtre yok"
+export interface ProductFilters {
+  search: string;
+  brandId: string;
+  categoryId: string;
+  gender: string;
+  color: string;
+  size: string;
+  minPrice: string;
+  maxPrice: string;
+  inStockOnly: boolean;
+  sort: string;
+}
+
+export const emptyFilters: ProductFilters = {
+  search: '',
+  brandId: '',
+  categoryId: '',
+  gender: '',
+  color: '',
+  size: '',
+  minPrice: '',
+  maxPrice: '',
+  inStockOnly: false,
+  sort: 'newest',
+};
