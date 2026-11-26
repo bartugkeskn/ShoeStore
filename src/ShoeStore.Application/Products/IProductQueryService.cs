@@ -12,4 +12,5 @@ public interface IProductQueryService
 {
     Task<PagedResult<ProductListItemDto>> GetListAsync(ProductListQuery query, CancellationToken ct = default);
     Task<ProductDetailDto?> GetBySlugAsync(string slug, CancellationToken ct = default);
+    Task<FilterOptionsDto> GetFilterOptionsAsync(CancellationToken ct = default);
 }

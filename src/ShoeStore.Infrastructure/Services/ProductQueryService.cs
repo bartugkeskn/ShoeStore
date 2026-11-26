@@ -125,4 +125,29 @@ public class ProductQueryService : IProductQueryService
             p.BrandId, p.BrandName, p.CategoryId, p.CategoryName,
             p.Gender.ToString(), p.BasePrice, p.Images, variants);
     }
+
+    public async Task<FilterOptionsDto> GetFilterOptionsAsync(CancellationToken ct = default)
+    {
+        var brands = await _db.Brands.AsNoTracking()
+            .OrderBy(b => b.Name)
+            .Select(b => new LookupDto(b.Id, b.Name))
+            .ToListAsync(ct);
+
+        var categories = await _db.Categories.AsNoTracking()
+            .OrderBy(c => c.Name)
+            .Select(c => new CategoryLookupDto(c.Id, c.Name, c.ParentId))
+            .ToListAsync(ct);
+
+        var colors = await _db.ProductVariants.AsNoTracking()
+            .Select(v => v.Color).Distinct().ToListAsync(ct);
+
+        var sizes = await _db.ProductVariants.AsNoTracking()
+            .Select(v => v.Size).Distinct().ToListAsync(ct);
+
+        return new FilterOptionsDto(
+            brands,
+            categories,
+            colors.OrderBy(c => c).ToList(),
+            sizes.OrderBy(s => s.Length).ThenBy(s => s).ToList());
+    }
 }

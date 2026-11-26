@@ -17,6 +17,9 @@ public static class ProductEndpoints
             return Results.Ok(result);
         });
 
+        group.MapGet("/filters", async (IProductQueryService service, CancellationToken ct) =>
+           Results.Ok(await service.GetFilterOptionsAsync(ct)));
+
         group.MapGet("/{slug}", async (string slug, IProductQueryService service, CancellationToken ct) =>
         {
             var product = await service.GetBySlugAsync(slug, ct);
